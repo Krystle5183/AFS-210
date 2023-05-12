@@ -78,12 +78,56 @@ def partition(a_list, start, end):
     return high
 
 
-
-
 print("Quick Sort:")
+myList = [54,26,93,17,77,31]
 myList = [x for x in range(1000)]
 random.shuffle(myList)
 start_time = time.time()
 quick_sort(myList,0,len(myList)-1)
 end_time = time.time()
+print()
+print("Sorted Listed: ")
+print(myList)   
 print(f"The execution time is: {end_time-start_time}")
+
+
+print("Partition Random: ")
+myList = [54,26,93,17,77,31]
+myList = [x for x in range(1000)]
+random.shuffle(myList)
+print(myList)
+start_time_random = time.time()
+partitionRandom(myList,0,len(myList)-1)
+end_time_random = time.time()
+print()
+print("Sorted Listed: ")
+print(myList)
+print(f"The execution time is: {end_time_random-start_time_random}")
+
+
+print("Partition Middle: ")
+myList = [54,26,93,17,77,31]
+myList = [x for x in range(1000)]
+random.shuffle(myList)
+print(myList)
+start_time_middle = time.time()
+partitionMiddle(myList,0,len(myList)-1)
+end_time_middle = time.time()
+print()
+print("Sorted Listed: ")
+print(myList)
+print(f"The execution time is: {end_time_middle-start_time_middle}")
+
+
+print("Partition End: ")
+myList = [54,26,93,17,77,31]
+myList = [x for x in range(1000)]
+random.shuffle(myList)
+print(myList)
+start_time_end = time.time()
+partitionEnd(myList,0,len(myList)-1)
+end_time_end = time.time()
+print()
+print("Sorted Listed: ")
+print(myList)
+print(f"The execution time is: {end_time_end-start_time_end}")
