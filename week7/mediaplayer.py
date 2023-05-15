@@ -1,7 +1,8 @@
-import random
+import _random
 
-class Song():
-    def __init__(self, title, artist):
+
+class Song:
+    def __init__(self,title,artist):
         self.title = title
         self.artist = artist
 
@@ -16,100 +17,16 @@ class Song():
 
     def __eq__(self, other):
         return ((self.title, self.artist) == (other.title, other.artist))
-    
+        
     def __ne__(self, other):
         return not (self == other)
-    
+
     def __lt__(self, other):
         return ((self.title, self.artist) < (other.title, other.artist))
         
     def __gt__(self, other):
         return ((self.title, self.artist) < (other.title, other.artist))
-
-
-class mediaPlayerQueue:
-    def __init__(self, data = 0, current = False):
-        self.queue = []
-        self.data(data)
-        self.currentlyPlaying(current)
-
-    def data(self, index):
-        self.data = index
-
-
-    def add(self, song):
-
-        if self.size() > 0: 
-            self.queue.insert(self.size() + 1, song)
-        else:
-            self.queue.insert(0, song)
-
-
-    def remove(self, title):
-            song_index = 0
-            for item in self.queue:
-                if item.title == title:
-                    break
-                song_index += 1
-            self.queue.pop(song_index)
-
-    def play(self, song_index):
-        self.data = song_index
-        self.currentlyPlaying(True)
         
-     def next(self):
-         if self.curently_playing:
-            x = len(self.queue) - 1   
-            if self.data == x:
-                next_song = 0
-            else:
-                next_song = self.data + 1
-            self.play(next_song)
-        else:
-            print('\n Please play a song as no song is playing.')
-        
-    def prev(self):
-        if self.curently_playing:
-            x = len(self.queue) - 1
-            if self.data == 0:
-                prev_song = x
-            else:
-                prev_song = self.data - 1
-            self.play(prev_song)
-        else:
-            print('\n Please play a song as no song is playing.')
-            
-    def shuffle(self):
-        z = self.size()
-        
-        for i in range(z // 2):
-            x = self.queue.pop(0)
-            self.queue.append(x)
-        
-        for i in range(z):
-            randomNum = random.randint(0, z - 1)
-            x = self.queue.pop(randomNum)
-            self.queue.append(x)         
-
-    def currentlyPlaying(self, current):
-        self.curently_playing = current
-    
-    def currentSong(self):
-        if self.curently_playing:
-            print(self.queue[self.data])
-        else:
-            print('\n Please play a song as no song is playing.')
-    
-    def size(self):
-        return len(self.queue)
-
-    def playList(self):
-        x = 1
-        print("\nSong List:\n")
-        for item in self.queue:
-            print(str(x) + '. ' + str(item))
-            x += 1
-
 def menu():
     print(20 * "-" , "MENU" , 20 * "-")
     print("1. Add Song to Playlist")
@@ -122,69 +39,125 @@ def menu():
     print("8. Show Current Playlist Order")
     print("0. Exit")
     print(47 * "-")
-    print('\n')
     
-mediaPlayer = mediaPlayerQueue()
+class MediaPlayer:
+    def __init__(self):
+        self.tail = None
+        self.head = None
+        self.count = 0
+        
+    def iter(self):
+        current = self.head
+        while current:
+            val = current.data
+            current = current.next
+            yield val
 
-mediaPlayer.add(Song('Watch the World Burn', 'Falling In Reverse'))
-mediaPlayer.add(Song('Thunderstruck', 'AC/DC'))
-mediaPlayer.add(Song('Cemetary Gates', 'Pantera'))
-mediaPlayer.add(Song('Last Resort', 'Papa Roach'))
-mediaPlayer.add(Song('Kashmir', 'Led Zeppelin'))
-mediaPlayer.add(Song('One', 'Metallica'))
+    def playList_size(self) -> int:
+        return self.count
+    
+    def addSong(self, data) -> None:
+        node = Song(data)
+        if (self.head == None):
+            self.head = node
+            self.tail = node
+        else:
+            node.next = self.head
+            self.head.prev = node
+            self.head = node
+            
+    def delete(self, data) -> None:
+        current = self.head
+        prev = self.head
+        while current:
+            if current.data == data:
+                if current == self.tail:
+                    prev.next = None
+                    self.tail = prev
+                elif current == self.head:
+                    current.next.prev = None
+                    self.head = current.next
+                else:
+                    prev.next = current.next
+                    current.next = prev
+                self.count -= 1
+                return
+            prev = current
+            current = current.next
+            
+    def merge(nlist,lefthalf,righthalf):
+        i=j=k=0       
+        while i < len(lefthalf) and j < len(righthalf):
+            if lefthalf[i] < righthalf[j]:
+                nlist[k]=lefthalf[i]
+                i=i+1
+            else:
+                nlist[k]=righthalf[j]
+                j=j+1
+            k=k+1
 
+        while i < len(lefthalf):
+            nlist[k]=lefthalf[i]
+            i=i+1
+            k=k+1
 
+        while j < len(righthalf):
+            nlist[k]=righthalf[j]
+            j=j+1
+            k=k+1
+        return 
+    
 while True:
     menu()
     choice = int(input())
     
+    playList = MediaPlayer()
+      
     if choice == 1:
         # Add code to prompt user for Song Title and Artist Name
-        addSong = input('Please enter the song title: ')
-        addArtist = input('Please enter the artist name: ')
+        newSongTitle = input('Enter the song title: ')
+        newSongArtist = input('Enter the artist name: ')
+        newSong = Song(newSongTitle, newSongArtist)
         # Add song to playlist
-        newSong = Song(addSong, addArtist)
-        mediaPlayer.add(newSong)
-        print("New Song Added to Playlist: ", addSong, addArtist)
+        newSong.addSong()
+        print("New Song Added to Playlist")
+        print(playList)
     elif choice == 2:
         # Prompt user for Song Title 
-        title = input('Enter the Song Title to be Removed: ')
+        deleteSongTitle = input('Enter song title to be removed: ')
         # remove song from playlist
-        mediaPlayer.remove(title)
-        print("Removed from Playlist: ", title)
+        playList.delete(deleteSongTitle)
+        print("Song Removed to Playlist")
     elif choice == 3:
         # Play the playlist from the beginning
-        mediaPlayer.play(0)
+        playList(newSong)
         # Display song name that is currently playing
-        print("Playing....")
-        mediaPlayer.currentSong()       
+        print(playList.getTitle)
+        print("Playing....")        
     elif choice == 4:
         # Skip to the next song on the playlist
-        mediaPlayer.next()
         # Display song name that is now playing
-        print("Skipping....") 
-        mediaPlayer.currentSong()                    
+        print("Skipping....")                     
     elif choice == 5:
         # Go back to the previous song on the playlist
-        mediaPlayer.prev()
         # Display song name that is now playing
         print("Replaying....")  
-        mediaPlayer.currentSong()
     elif choice == 6:
         # Randomly shuffle the playlist and play the first song
-        mediaPlayer.shuffle()
-        mediaPlayer.play(0)
+        playList.merge(lefthalf, righthalf)
+        print(playList[0])
         # Display song name that is now playing
-        print("Shuffling....") 
-        mediaPlayer.currentSong()         
+        print(newSongTitle)
+        print("Shuffling....")          
     elif choice == 7:
         # Display the song name and artist of the currently playing song
-        print("Currently playing: ", end=" ")
-        mediaPlayer.currentSong()    
+        print(newSongTitle)
+        print(newSongArtist)
+        print("Currently playing: ", end=" ")    
     elif choice == 8:
         # Show the current song list order
         print("\nSong list:\n")
-        mediaPlayer.playList()
+        print(playList)
     elif choice == 0:
         print("Goodbye.")
         break
